@@ -50,19 +50,19 @@ Task("Create-Directory")
 });
 
 
-Task("UpdateAssemblyInfo")
-.IsDependentOn("Create-Directory")
-    .Does(() =>
-{
-    GitVersion(new GitVersionSettings {
-        UpdateAssemblyInfo = true
-    });
-});
+// Task("UpdateAssemblyInfo")
+// .IsDependentOn("Create-Directory")
+//     .Does(() =>
+// {
+//     GitVersion(new GitVersionSettings {
+//         UpdateAssemblyInfo = true
+//     });
+// });
 
 GitVersion relativeVersion = null;
 
 Task("GetVersionInfo")
-.IsDependentOn("UpdateAssemblyInfo")
+.IsDependentOn("Create-Directory")
     .Does(() =>
 {
     relativeVersion = GitVersion(new GitVersionSettings {
