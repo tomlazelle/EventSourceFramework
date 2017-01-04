@@ -59,20 +59,17 @@ Task("Create-Directory")
 //     });
 // });
 
-GitVersion relativeVersion = null;
+var relativeVersion = "1.0.0.0";
 
 Task("GetVersionInfo")
 .IsDependentOn("Create-Directory")
     .Does(() =>
 {
-    relativeVersion = GitVersion(new GitVersionSettings {
-        UserName = "tomlazelle",
-        Password = "T0msl1ck",
-        Url = "https://github.com/tomlazelle/EventSourceFramework.git",
-        Branch = "master"
-        // Commit = EnviromentVariable("MY_COMMIT")
-    });
-    // Use result for building nuget packages, setting build server version, etc...
+    var buildnumber = EnvironmentVariable("BUILD_NUMBER");
+
+    if(buildnumber != null && buildnumber != ""){
+        relativeVersion = buildnumber;
+    }
 });
 
 Task("Pack")
@@ -88,7 +85,7 @@ var info = ParseAssemblyInfo("./EventSource.Framework/Properties/AssemblyInfo.cs
 
        var nuGetPackSettings   = new NuGetPackSettings {
                                     Id                      = info.Product,
-                                    Version                 = relativeVersion.NuGetVersion,
+                                    Version                 = relativeVersion,
                                     Title                   = info.Title,
                                     Authors                 = new[] {"Tom La Zelle"},
                                     Description             = info.Description,
@@ -116,7 +113,7 @@ var info = ParseAssemblyInfo("./EventSource.Framework/Properties/AssemblyInfo.cs
  .IsDependentOn("Pack")
  .Does(()=>{
 // Get the path to the package.
-var package = "./nuget/EventSource.Framework." + relativeVersion.NuGetVersion + ".nupkg";
+var package = "./nuget/EventSource.Framework." + relativeVersion + ".nupkg";
             
 // Push the package.
 NuGetPush(package, new NuGetPushSettings {
