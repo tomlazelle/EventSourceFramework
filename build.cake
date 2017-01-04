@@ -10,7 +10,7 @@ var sln = "./EventSourceFramework.sln";
 var appName = "EventSource.Framework";
 var version = "1.0.0.0";
 
-Task("Default").IsDependentOn("Pack");
+Task("Default").IsDependentOn("Push-Nuget");
 
 Task("Clean")
     .Does(() =>
@@ -75,77 +75,44 @@ var info = ParseAssemblyInfo("./EventSource.Framework/Properties/AssemblyInfo.cs
                                     Id                      = info.Product,
                                     Version                 = relativeVersion.NuGetVersion,
                                     Title                   = info.Title,
-                                    Authors                 = new[] {""},
+                                    Authors                 = new[] {"Tom La Zelle"},
                                     Description             = info.Description,
                                     Summary                 = info.Description,
                                     ProjectUrl              = new Uri("https://github.com/tomlazelle/EventSourceFramework.git"),
                                     Files                   = new [] {
-                                                                        new NuSpecContent {Source = @"*" ,Target = @"lib\net45\"},
+                                                                        new NuSpecContent {Source = @"EventSource.Framework.*" ,Target = @"lib\net45\"},
                                                                       },
-                                    BasePath                = "./bin",
+                                    Dependencies = new []{
+                                        new NuSpecDependency{
+                                            Id="RavenDB.Client",
+                                            TargetFramework = "net452"
+                                        },
+                                        new NuSpecDependency{
+                                            Id="StructureMap",
+                                            TargetFramework = "net452"
+                                        }
+                                    },
+                                    BasePath                = "./EventSource.Framework/bin",
                                     OutputDirectory         = "./nuget"
                                 };
 
     NuGetPack(nuGetPackSettings);
 });
 
- 
+ //43b006e1-e30a-4a0e-af42-b04ac797ce0a
 
-  
+ Task("Push-Nuget")
+ .IsDependentOn("Pack")
+ .Does(()=>{
+// Get the path to the package.
+var package = "./nuget/EventSource.Framework." + relativeVersion.NuGetVersion + ".nupkg";
+            
+// Push the package.
+NuGetPush(package, new NuGetPushSettings {
+    Source = "https://www.myget.org/F/tomlazelle/api/v2/package",
+    ApiKey = "43b006e1-e30a-4a0e-af42-b04ac797ce0a"
+});
 
-// Task("Generate-Swagger-Json")
-//   .IsDependentOn("Pack-Api")
-//   .Does(()=>{
-
-//     var root = System.IO.Directory.GetCurrentDirectory();
-//     var swagGen = System.IO.Path.GetFullPath(Directory("./tools/WebApiSwaggerGenerator/lib/net45").Path.FullPath) + @"\WebApiSwaggerGenerator.exe";
-    
-//     StartAndReturnProcess(swagGen,
-//       new ProcessSettings{
-//         Arguments = "-a" + root + @"\bin\ShippingServices.dll -o" + root + @"\swagger.json"
-//     });
-// });
-
-// Task("Generate-Api-SDK")
-//   .IsDependentOn("Generate-Swagger-Json")
-//   .Does(() =>
-// {
-//     var root = System.IO.Directory.GetCurrentDirectory();
-//     var autoRest = System.IO.Path.GetFullPath(Directory("./tools/autorest/tools").Path.FullPath) + @"\AutoRest.exe";
-
-//     StartProcess(autoRest,
-//       new ProcessSettings{
-//         Arguments= "-OutputDirectory " + root + @"\generated -Namespace BAS.ShippingService.Api.Client -Input " + root + @"\swagger.json -AddCredentials"
-//       });
-// }).ReportError(exception =>
-// {  
-//     Information(exception.ToString());
-// });
-
-// Task("Build-SDK")
-// .IsDependentOn("Generate-Api-SDK")
-// .Does(()=>{
-
-
-//   var parameters = new []{
-//     @"/recurse:{workingFolder}\generated\*.cs",
-//     @"/out:{workingFolder}\generated\BAS.ShippingService.Api.Client.dll",
-//     @"/reference:{workingFolder}\tools\Microsoft.Rest.ClientRuntime\lib\net45\Microsoft.Rest.ClientRuntime.dll",
-//     @"/reference:{workingFolder}\tools\Newtonsoft.Json\lib\net45\Newtonsoft.Json.dll",
-//     @"/reference:System.Net.Http.dll", 
-//     @"/target:library"  
-//   };
-
-//   var root = System.IO.Directory.GetCurrentDirectory();
-
-//   for (int i = 0; i < parameters.Length; i++)
-//   {
-//       parameters[i] = parameters[i].Replace("{workingFolder}",root);
-//   }
-
-  
-//   StartProcess(@"C:\Program Files (x86)\MSBuild\14.0\bin\csc.exe", string.Join(" ",parameters) + " ");
-
-// });
+ });
 
 RunTarget(buildTarget);
