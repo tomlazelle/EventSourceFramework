@@ -59,7 +59,7 @@ Task("Create-Directory")
 //     });
 // });
 
-var relativeVersion = "1.0.0.0";
+var relativeVersion = "1.0.0";
 
 Task("GetVersionInfo")
 .IsDependentOn("Create-Directory")
@@ -68,7 +68,7 @@ Task("GetVersionInfo")
     var buildnumber = EnvironmentVariable("BUILD_NUMBER");
 
     if(buildnumber != null && buildnumber != ""){
-        relativeVersion = buildnumber;
+        relativeVersion = string.format("0.0.{0}") buildnumber;
     }
 });
 
