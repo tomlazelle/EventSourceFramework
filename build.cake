@@ -16,6 +16,11 @@ Task("Clean")
     .Does(() =>
 {
     CleanDirectory(buildDir);
+
+    if(DirectoryExists("./nuget"))
+        {
+            CleanDirectory("./nuget");
+        }
 });
 
 Task("Restore-NuGet-Packages")
@@ -44,10 +49,20 @@ Task("Create-Directory")
   EnsureDirectoryExists("nuget");
 });
 
+
+Task("UpdateAssemblyInfo")
+.IsDependentOn("Create-Directory")
+    .Does(() =>
+{
+    GitVersion(new GitVersionSettings {
+        UpdateAssemblyInfo = true
+    });
+});
+
 GitVersion relativeVersion = null;
 
 Task("GetVersionInfo")
-.IsDependentOn("Create-Directory")
+.IsDependentOn("UpdateAssemblyInfo")
     .Does(() =>
 {
     relativeVersion = GitVersion(new GitVersionSettings {
@@ -82,11 +97,7 @@ var info = ParseAssemblyInfo("./EventSource.Framework/Properties/AssemblyInfo.cs
                                     Files                   = new [] {
                                                                         new NuSpecContent {Source = @"EventSource.Framework.*" ,Target = @"lib\net45\"},
                                                                       },
-                                    Dependencies = new []{
-                                        new NuSpecDependency{
-                                            Id="RavenDB.Client",
-                                            TargetFramework = "net452"
-                                        },
+                                    Dependencies = new []{                                        
                                         new NuSpecDependency{
                                             Id="StructureMap",
                                             TargetFramework = "net452"
@@ -108,10 +119,10 @@ var info = ParseAssemblyInfo("./EventSource.Framework/Properties/AssemblyInfo.cs
 var package = "./nuget/EventSource.Framework." + relativeVersion.NuGetVersion + ".nupkg";
             
 // Push the package.
-NuGetPush(package, new NuGetPushSettings {
-    Source = "https://www.myget.org/F/tomlazelle/api/v2/package",
-    ApiKey = "43b006e1-e30a-4a0e-af42-b04ac797ce0a"
-});
+// NuGetPush(package, new NuGetPushSettings {
+//     Source = "https://www.myget.org/F/tomlazelle/api/v2/package",
+//     ApiKey = "43b006e1-e30a-4a0e-af42-b04ac797ce0a"
+// });
 
  });
 
