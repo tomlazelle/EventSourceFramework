@@ -119,10 +119,10 @@ var info = ParseAssemblyInfo("./EventSource.Framework/Properties/AssemblyInfo.cs
 var package = "./nuget/EventSource.Framework." + relativeVersion.NuGetVersion + ".nupkg";
             
 // Push the package.
-// NuGetPush(package, new NuGetPushSettings {
-//     Source = "https://www.myget.org/F/tomlazelle/api/v2/package",
-//     ApiKey = "43b006e1-e30a-4a0e-af42-b04ac797ce0a"
-// });
+NuGetPush(package, new NuGetPushSettings {
+    Source = "https://www.myget.org/F/tomlazelle/api/v2/package",
+    ApiKey = "43b006e1-e30a-4a0e-af42-b04ac797ce0a"
+});
 
  });
 

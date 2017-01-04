@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -29,5 +29,7 @@ using System.Runtime.InteropServices;
 //      Build Number
 //      Revision
 //
-[assembly: AssemblyInformationalVersion("0.1.0+4.Branch.master.Sha.cf04e30e75b374c0fee35860e1833177d04446c2")]
+[assembly: AssemblyInformationalVersion("0.1.0+5.Branch.master.Sha.a87f7e63f161e5593ec33159fac040d5b2258fff")]
 [assembly: AssemblyFileVersion("0.1.0.0")]
+
+[assembly: AssemblyVersion("0.1.0.0")]
