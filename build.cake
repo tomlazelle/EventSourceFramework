@@ -68,7 +68,7 @@ Task("GetVersionInfo")
     var buildnumber = EnvironmentVariable("BUILD_NUMBER");
 
     if(buildnumber != null && buildnumber != ""){
-        relativeVersion = string.format("0.0.{0}") buildnumber;
+        relativeVersion = string.Format("0.0.{0}", buildnumber);
     }
 });
 
