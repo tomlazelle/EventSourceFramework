@@ -1,3 +1,4 @@
+#tool "nuget:?package=GitVersion.CommandLine"
 
 var buildTarget = Argument("target","Default");
 var configuration = Argument("configuration", "Release");
@@ -9,7 +10,7 @@ var sln = "./EventSourceFramework.sln";
 var appName = "EventSource.Framework";
 var version = "1.0.0.0";
 
-Task("Default").IsDependentOn("Build");
+Task("Default").IsDependentOn("Pack");
 
 Task("Clean")
     .Does(() =>
@@ -36,41 +37,57 @@ Task("Build")
 });
 
 
-// Task("Create-Directory")
-// .IsDependentOn("Run-Unit-Tests")
-// .Does(()=>{
+Task("Create-Directory")
+.IsDependentOn("Build")
+.Does(()=>{
 
-//   EnsureDirectoryExists("nuget");
-// });
+  EnsureDirectoryExists("nuget");
+});
 
-// Task("Pack-Manufacturing-Api")
-//   .IsDependentOn("Create-Directory")
-//   .Does(() => {
+GitVersion relativeVersion = null;
 
-// var info = ParseAssemblyInfo("./Manufacturing.Api/Properties/AssemblyInfo.cs");
+Task("GetVersionInfo")
+.IsDependentOn("Create-Directory")
+    .Does(() =>
+{
+    relativeVersion = GitVersion(new GitVersionSettings {
+        UserName = "tomlazelle",
+        Password = "T0msl1ck",
+        Url = "https://github.com/tomlazelle/EventSourceFramework.git",
+        Branch = "master"
+        // Commit = EnviromentVariable("MY_COMMIT")
+    });
+    // Use result for building nuget packages, setting build server version, etc...
+});
+
+Task("Pack")
+  .IsDependentOn("GetVersionInfo")
+  .Does(() => {
+
+var info = ParseAssemblyInfo("./EventSource.Framework/Properties/AssemblyInfo.cs");
 
     
-//     Information(info.Title);
-//     Information(info.Description);
-//     Information(info.Product);
+    Information(info.Title);
+    Information(info.Description);
+    Information(info.Product);
 
-//        var nuGetPackSettings   = new NuGetPackSettings {
-//                                     Id                      = info.Product,
-//                                     Version                 = "1.0.0.0",
-//                                     Title                   = info.Title,
-//                                     Authors                 = new[] {"BuildASign"},
-//                                     Description             = info.Description,
-//                                     Summary                 = info.Description,
-//                                     ProjectUrl              = new Uri("https://github.com/buildasign/multi-carrier-shipping"),
-//                                     Files                   = new [] {
-//                                                                         new NuSpecContent {Source = @"*" ,Target = @"lib\net45\"},
-//                                                                       },
-//                                     BasePath                = "./bin",
-//                                     OutputDirectory         = "./nuget"
-//                                 };
+       var nuGetPackSettings   = new NuGetPackSettings {
+                                    Id                      = info.Product,
+                                    Version                 = relativeVersion.NuGetVersion,
+                                    Title                   = info.Title,
+                                    Authors                 = new[] {""},
+                                    Description             = info.Description,
+                                    Summary                 = info.Description,
+                                    ProjectUrl              = new Uri("https://github.com/tomlazelle/EventSourceFramework.git"),
+                                    Files                   = new [] {
+                                                                        new NuSpecContent {Source = @"*" ,Target = @"lib\net45\"},
+                                                                      },
+                                    BasePath                = "./bin",
+                                    OutputDirectory         = "./nuget"
+                                };
 
-//     NuGetPack(nuGetPackSettings);
-// });
+    NuGetPack(nuGetPackSettings);
+});
 
  
 
