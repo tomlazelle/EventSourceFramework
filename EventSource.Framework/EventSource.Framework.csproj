@@ -52,6 +52,7 @@
     <Compile Include="IEventPublisher.cs" />
     <Compile Include="IEventStore.cs" />
     <Compile Include="IMessageHandler.cs" />
+    <Compile Include="ITypeActivator.cs" />
     <Compile Include="IVersionedEvent.cs" />
     <Compile Include="Throw.cs" />
     <Compile Include="VersionedEvent.cs" />
