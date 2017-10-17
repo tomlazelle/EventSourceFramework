@@ -1,7 +1,16 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
+    <AssemblyVersion>1.0.0.7</AssemblyVersion>
+    <AssemblyFileVersion>1.0.0.7</AssemblyFileVersion>
+    <Version>1.0.0.7</Version>
+    <Description>EventSource.Framework</Description>
+    <RepositoryUrl>https://github.com/tomlazelle/EventSourceFramework</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/tomlazelle/EventSourceFramework</PackageProjectUrl>
+    <RepositoryType>git</RepositoryType>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <Authors>Tom LaZelle</Authors>
   </PropertyGroup>
 
   <ItemGroup>
